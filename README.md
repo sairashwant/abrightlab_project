@@ -18,10 +18,10 @@ This prototype diagnoses all 2,000 locations, redesigns vendor territories and r
 
 | | Today | With the plan |
 |---|---|---|
-| Locations losing money | 612 | 138 |
-| Gross margin | 5.5% | 17.4% |
+| Locations losing money | 522 | 110 |
+| Gross margin | 9.5% | 18.3% |
 
-In New York, 7 vendors crisscrossing the city become 24 territory routes with 63% less driving.
+In New York, 7 vendors crisscrossing the city become 24 territory routes with 53% less driving, and the plan adds $10.6M a year in gross margin.
 
 ## Run it locally
 
