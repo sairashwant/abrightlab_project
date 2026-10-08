@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Peazy Margin Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..750&display=swap" rel="stylesheet">
+<style>
+:root { --paper:#F2F5F4; --card:#FFFFFF; --ink:#13222A; --muted:#5B6B73; --line:#D9E1DE;
+  --ok:#1E8A6E; --thin:#D49A1A; --loss:#C23A44; --accent:#2557A7;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px); }
+@media (prefers-color-scheme:dark) { :root:not([data-theme="light"]) { --paper:#0E171B; --card:#142026; --ink:#E6EEEC;
+  --muted:#93A4AA; --line:#24343B; --ok:#3DBB95; --thin:#E5B04A; --loss:#EA6A73; --accent:#79A3F0; } }
+:root[data-theme="dark"] { --paper:#0E171B; --card:#142026; --ink:#E6EEEC; --muted:#93A4AA; --line:#24343B;
+  --ok:#3DBB95; --thin:#E5B04A; --loss:#EA6A73; --accent:#79A3F0; }
+*, *::before, *::after { box-sizing:inherit; }
+body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.5 "Archivo", system-ui, sans-serif; font-variant-numeric:tabular-nums; }
+main { max-width:1180px; margin:0 auto; padding:0 24px 48px; }
+header { max-width:1180px; margin:0 auto; padding:18px 24px; font-weight:700; font-stretch:80%; font-size:1.1rem; }
+section { padding:44px 0; border-top:1px solid var(--line); }
+h1, h2 { font-stretch:72%; font-weight:720; line-height:1.04; margin:0 0 12px; }
+h1 { font-size:clamp(2.4rem, 5vw, 3.8rem); }
+h2 { font-size:clamp(1.7rem, 3vw, 2.3rem); }
+p { color:var(--muted); margin:0 0 16px; max-width:60ch; }
+.card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:18px; }
+svg { display:block; width:100%; height:auto; }
+
+/* hero */
+.hero { display:grid; grid-template-columns:minmax(0,330px) minmax(0,1fr); gap:32px; align-items:start; border-top:0; padding-top:12px; }
+.hero > *, .split > * { min-width:0; }
+@media (max-width:860px) { .hero, .split { grid-template-columns:minmax(0,1fr) !important; } }
+.toggle { display:inline-flex; background:var(--line); border-radius:99px; padding:3px; margin:6px 0 24px; }
+.toggle button { font:inherit; border:0; background:none; color:var(--ink); padding:8px 18px; border-radius:99px; cursor:pointer; }
+.toggle button[aria-pressed="true"] { background:var(--ink); color:var(--paper); }
+.stat { margin-bottom:18px; }
+.stat b { display:block; font-size:2.2rem; font-stretch:70%; line-height:1; }
+.stat span { color:var(--muted); font-size:.92rem; }
+.legend { display:flex; gap:16px; flex-wrap:wrap; font-size:.85rem; color:var(--muted); margin-top:12px; }
+.legend i { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; }
+#map circle { cursor:pointer; transition:fill .6s; fill-opacity:.85; }
+#map text { font-size:11px; fill:var(--muted); pointer-events:none; }
+#map circle.selected { stroke:var(--ink); stroke-width:2; }
+
+/* site detail */
+#detail { margin-top:16px; display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:18px; }
+#detail h3 { margin:0 0 4px; font-stretch:80%; }
+.hours { display:grid; grid-template-columns:80px 1fr 48px; gap:6px 10px; align-items:center; font-size:.88rem; }
+.bar { height:9px; border-radius:5px; }
+.tag { display:inline-block; padding:3px 10px; border-radius:99px; font-size:.85rem; font-weight:600; color:#fff; }
+
+/* causes */
+.cause { display:grid; grid-template-columns:minmax(150px,1.2fr) 2fr 80px 70px; gap:14px; align-items:center; padding:12px 0; border-bottom:1px solid var(--line); }
+.cause .bar { background:var(--loss); }
+.num { text-align:right; white-space:nowrap; }
+@media (max-width:600px) { .cause { grid-template-columns:1fr 60px 70px; } .cause .track { display:none; } }
+
+/* territories */
+select { font:inherit; padding:8px 12px; border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--ink); margin-bottom:16px; }
+.pair { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+@media (max-width:700px) { .pair { grid-template-columns:1fr; } }
+.pair h3 { margin:0 0 10px; font-stretch:80%; font-size:1.05rem; }
+.strip { display:flex; gap:40px; flex-wrap:wrap; margin-top:20px; }
+
+/* plan */
+.split { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:36px; }
+.lever { padding:14px 0; border-bottom:1px solid var(--line); }
+.lever div { display:flex; justify-content:space-between; gap:12px; font-weight:600; font-size:.95rem; }
+input[type=range] { width:100%; accent-color:var(--accent); margin-top:8px; }
+.result .stat b { font-size:3rem; }
+.compare { display:grid; grid-template-columns:70px 1fr 48px; gap:8px 10px; align-items:center; font-size:.9rem; margin-top:8px; }
+
+footer { max-width:1180px; margin:0 auto; padding:20px 24px 32px; color:var(--muted); font-size:.85rem; display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
+footer button { font:inherit; padding:7px 14px; border-radius:99px; border:1px solid var(--ink); background:none; color:var(--ink); cursor:pointer; }
+</style>
+</head>
+<body>
+<header>Peazy Margin Lab</header>
+<main>
+  <section class="hero">
+    <div>
+      <h1 id="headline"></h1>
+      <p>Why each location loses money, found from data Peazy already records, and a plan to fix it.</p>
+      <div class="toggle"><button id="today" aria-pressed="true">Today</button><button id="plan" aria-pressed="false">With the plan</button></div>
+      <div id="stats"></div>
+    </div>
+    <div>
+      <div class="card"><svg id="map"></svg>
+        <div class="legend"><span><i style="background:var(--ok)"></i>15%+ margin</span><span><i style="background:var(--thin)"></i>0 to 15%</span><span><i style="background:var(--loss)"></i>Losing money</span></div>
+      </div>
+      <div class="card" id="detail"></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Why locations lose money</h2>
+    <p id="causesIntro"></p>
+    <div id="causes"></div>
+    <p id="check" style="margin-top:16px"></p>
+  </section>
+
+  <section>
+    <h2>Fewer vendors, shorter routes</h2>
+    <p>K-Means groups each metro's sites into territories, each served by one vendor. 2-opt then builds each route from OpenStreetMap drive times.</p>
+    <select id="metro" aria-label="Metro"></select>
+    <div class="pair">
+      <div class="card"><h3 id="beforeTitle"></h3><svg id="before"></svg></div>
+      <div class="card"><h3 id="afterTitle"></h3><svg id="after"></svg></div>
+    </div>
+    <div class="strip" id="routeStats"></div>
+  </section>
+
+  <section>
+    <h2>Test the plan</h2>
+    <p>Set how much of each fix you expect to capture. The map above updates too.</p>
+    <div class="split">
+      <div id="levers"></div>
+      <div class="card result" id="result"></div>
+    </div>
+  </section>
+</main>
+<footer><span id="source"></span><button id="refresh" hidden>Refresh drive times</button></footer>
+
+<script id="data" type="application/json">/*DATA*/</script>
+<script>
+const D = JSON.parse(document.getElementById("data").textContent);
+const $ = id => document.getElementById(id);
+const money = v => Math.abs(v) >= 1e6 ? `$${(v / 1e6).toFixed(1)}M` : `$${Math.round(v / 1e3)}k`;
+const pct = v => `${(v * 100).toFixed(1)}%`;
+const proj = ([lat, lon]) => [(lon + 125) * 16, (50 - lat) * 20.3];
+const colorOf = (r, c) => (r - c) / r < 0 ? "var(--loss)" : (r - c) / r < 0.15 ? "var(--thin)" : "var(--ok)";
+function add(svg, tag, attrs) {
+  const e = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  return svg.appendChild(e);
+}
+function fit(svg, points, pad) {
+  const xs = points.map(p => p[0]), ys = points.map(p => p[1]);
+  svg.setAttribute("viewBox", `${Math.min(...xs) - pad} ${Math.min(...ys) - pad} ${Math.max(...xs) - Math.min(...xs) + 2 * pad} ${Math.max(...ys) - Math.min(...ys) + 2 * pad}`);
+}
+
+// ---------- plan
+const plan = Object.fromEntries(Object.entries(D.plan).map(([k, v]) => [k, v.default]));
+let usePlan = false, selected = null;
+function result(s, withPlan = usePlan) {
+  if (!withPlan) return { revenue: s.revenue, cost: s.cost };
+  const f = s.fixes;
+  return { revenue: s.revenue + plan.reprice * f.reprice + plan.change_order * f.change_order,
+           cost: s.cost - plan.verified_hours * f.verified_hours - plan.consolidate * f.consolidate - plan.local_vendor * f.local_vendor };
+}
+function totals(withPlan) {
+  let revenue = 0, cost = 0, losing = 0;
+  for (const s of D.sites) { const r = result(s, withPlan); revenue += r.revenue; cost += r.cost; losing += r.revenue < r.cost; }
+  return { losing, margin: (revenue - cost) / revenue, profit: (revenue - cost) * 12 };
+}
+
+// ---------- map
+D.sites.forEach(s => s.xy = proj([s.lat, s.lon]));
+fit($("map"), D.sites.map(s => s.xy), 15);
+const dots = D.sites.map(s => {
+  const c = add($("map"), "circle", { cx: s.xy[0], cy: s.xy[1], r: 3.2 });
+  c.onclick = () => { selected = s; render(); };
+  return c;
+});
+D.metros.forEach((name, m) => {
+  const ss = D.sites.filter(s => s.metro === m && !s.remote);
+  const x = Math.max(...ss.map(s => s.xy[0])), y = ss.reduce((a, s) => a + s.xy[1], 0) / ss.length;
+  add($("map"), "text", { x: x + 4, y: y + 4 }).textContent = name;
+});
+
+function render() {
+  D.sites.forEach((s, i) => { const r = result(s); dots[i].setAttribute("fill", colorOf(r.revenue, r.cost)); dots[i].classList.toggle("selected", s === selected); });
+  const t = totals(usePlan), base = totals(false);
+  $("headline").textContent = usePlan ? `With the plan, ${t.losing} locations still lose money.` : `${t.losing} of ${D.sites.length.toLocaleString()} locations lose money.`;
+  $("stats").innerHTML = [[pct(t.margin), "gross margin"], [money(t.profit), "gross margin per year"], [money(t.profit - base.profit), "gained by the plan per year"]]
+    .slice(0, usePlan ? 3 : 2).map(([b, s]) => `<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("");
+  $("today").setAttribute("aria-pressed", !usePlan); $("plan").setAttribute("aria-pressed", usePlan);
+  renderDetail(); renderResult(base);
+}
+$("today").onclick = () => { usePlan = false; render(); };
+$("plan").onclick = () => { usePlan = true; render(); };
+
+function renderDetail() {
+  const s = selected, r = result(s), max = Math.max(s.hours, s.onsite, s.billed);
+  const hour = (label, v, color) => `<span>${label}</span><div class="bar" style="width:${v / max * 100}%;background:${color}"></div><span>${v} h</span>`;
+  const fixes = Object.entries(s.fixes).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
+  $("detail").innerHTML = `
+    <div><h3>${s.id}</h3><p style="margin:0 0 10px">${s.sqft.toLocaleString()} sq ft ${s.remote ? "outside" : "in"} ${D.metros[s.metro]}</p>
+      <span class="tag" style="background:${colorOf(r.revenue, r.cost)}">${s.cause === null ? "Profitable" : D.causes[s.cause]}</span>
+      <p style="margin:10px 0 0">Revenue ${money(r.revenue * 12)} and cost ${money(r.cost * 12)} a year.</p></div>
+    <div><h3>Hours per visit</h3><div class="hours">${hour("Contract", s.hours, "var(--muted)")}${hour("On site", s.onsite, "var(--accent)")}${hour("Billed", s.billed, s.billed > s.onsite ? "var(--loss)" : "var(--ok)")}</div></div>
+    <div><h3>Fixes that apply</h3>${fixes.length ? fixes.map(([k, v]) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:.9rem"><span>${D.plan[k].label}</span><b>${money(v * 12)}</b></div>`).join("") : "<p>None needed.</p>"}</div>`;
+}
+
+// ---------- causes
+const losingSites = D.sites.filter(s => s.cause !== null);
+$("causesIntro").textContent = `Each location's gap to its ${D.target_margin * 100}% target margin splits into ${D.causes.length} dollar amounts. The biggest one is its cause.`;
+const rows = D.causes.map((name, c) => { const ss = losingSites.filter(s => s.cause === c); return { name, n: ss.length, loss: ss.reduce((a, s) => a + s.cost - s.revenue, 0) * 12 }; }).sort((a, b) => b.loss - a.loss);
+$("causes").innerHTML = rows.map(r => `<div class="cause"><b>${r.name}</b><div class="track"><div class="bar" style="width:${r.loss / rows[0].loss * 100}%"></div></div><span class="num">${r.n} sites</span><span class="num">${money(r.loss)}</span></div>`).join("");
+$("check").textContent = `Checked against the problems planted in the synthetic data, the diagnosis finds ${D.check[0] * 100}% of underpriced and ${D.check[1] * 100}% of scope-creep sites.`;
+
+// ---------- territories
+D.metros.forEach((name, i) => $("metro").add(new Option(name, i)));
+$("metro").value = D.metros.map((_, m) => D.sites.filter(s => s.metro === m).length).reduce((best, n, m, all) => n > all[best] ? m : best, 0);
+function renderRoutes() {
+  const m = +$("metro").value, ss = D.sites.filter(s => s.metro === m && !s.remote), terr = D.territories.filter(t => t.metro === m);
+  const vendors = [...new Set(ss.map(s => s.vendor))], hue = (i, n) => `hsl(${i * 360 / n} 60% 50%)`;
+  for (const id of ["before", "after"]) { $(id).innerHTML = ""; fit($(id), ss.map(s => s.xy), 3); }
+  const w = +$("before").getAttribute("viewBox").split(" ")[2];
+  for (const s of ss) { const v = proj(D.vendors[s.vendor]); add($("before"), "line", { x1: v[0], y1: v[1], x2: s.xy[0], y2: s.xy[1], stroke: hue(vendors.indexOf(s.vendor), vendors.length), "stroke-width": w / 350, opacity: .7 }); }
+  terr.forEach((t, i) => add($("after"), "polyline", { points: t.path.map(proj).join(" "), fill: "none", stroke: hue(i, terr.length), "stroke-width": w / 220, "stroke-linejoin": "round" }));
+  for (const svg of ["before", "after"]) ss.forEach(s => add($(svg), "circle", { cx: s.xy[0], cy: s.xy[1], r: w / 160, fill: "var(--ink)" }));
+  const before = terr.reduce((a, t) => a + t.before, 0), after = terr.reduce((a, t) => a + t.after, 0);
+  $("beforeTitle").textContent = `Today: ${vendors.length} vendors crisscross ${D.metros[m]}`;
+  $("afterTitle").textContent = `With the plan: ${terr.length} territory routes`;
+  $("routeStats").innerHTML = [[`${Math.round((1 - after / before) * 100)}%`, "less driving time"], [Math.round(before / 4.33), "drive hours a week today"], [Math.round(after / 4.33), "drive hours a week with routes"]]
+    .map(([b, s]) => `<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("");
+}
+$("metro").onchange = renderRoutes;
+
+// ---------- levers
+for (const [key, { label }] of Object.entries(D.plan)) {
+  const el = document.createElement("label");
+  el.className = "lever";
+  el.innerHTML = `<div><span>${label}</span><span>${Math.round(plan[key] * 100)}%</span></div><input type="range" min="0" max="1" step="0.05" value="${plan[key]}">`;
+  el.querySelector("input").oninput = e => { plan[key] = +e.target.value; el.querySelector("div span:last-child").textContent = Math.round(plan[key] * 100) + "%"; usePlan = true; render(); };
+  $("levers").appendChild(el);
+}
+function renderResult(base) {
+  const t = totals(true);
+  const bar = (label, v, color) => `<span>${label}</span><div class="bar" style="width:${v / base.losing * 100}%;background:${color}"></div><span class="num">${v}</span>`;
+  $("result").innerHTML = `
+    <div class="stat"><b>${pct(base.margin)} → ${pct(t.margin)}</b><span>gross margin</span></div>
+    <div class="stat"><b>+${money(t.profit - base.profit)}</b><span>gross margin per year</span></div>
+    <p style="margin:18px 0 0">Locations losing money</p>
+    <div class="compare">${bar("Today", base.losing, "var(--loss)")}${bar("Plan", t.losing, "var(--accent)")}</div>`;
+}
+
+// ---------- refresh (works when served by app.py)
+$("source").textContent = `Synthetic data. Drive times: ${D.osrm ? "OpenStreetMap (OSRM)" : "estimated, OSRM was unreachable"}.`;
+$("refresh").hidden = !["localhost", "127.0.0.1"].includes(location.hostname);
+$("refresh").onclick = async () => {
+  $("source").textContent = "Getting drive times from OpenStreetMap. Progress shows in the terminal.";
+  const r = await fetch("/api/rebuild", { method: "POST" });
+  r.ok ? location.reload() : ($("source").textContent = "Refresh failed. Check the terminal running app.py.");
+};
+
+selected = D.sites.reduce((worst, s) => s.revenue - s.cost < worst.revenue - worst.cost ? s : worst);
+render(); renderRoutes();
+</script>
+</body>
+</html>
