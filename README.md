@@ -2,7 +2,7 @@
 
 A prototype for the **abrightlab 2,000-Location Challenge**, by Sai Rashwant Venkataraman Sundaram.
 
-**[Live dashboard](https://sairashwant.github.io/abrightlab_project/)** | **[Full write-up (PDF)](report.pdf)**
+**[Live dashboard](https://sairashwant.github.io/abrightlab_project/)** | **[Full write-up (PDF)](Report.pdf)**
 
 ## Summary
 
