@@ -1,24 +1,41 @@
 # Peazy Margin Lab
 
-Why do some of 2,000 cleaning locations lose money, and what fixes it? All data is synthetic.
+A prototype for the **abrightlab 2,000-Location Challenge**, by Sai Rashwant Venkataraman Sundaram.
 
-**Live demo:** _paste your link here_
+**[Live dashboard](https://sairashwant.github.io/abrightlab_project/)** | **[Full write-up (PDF)](Sai_abrightlab_Challenge_Writeup.pdf)**
 
-## Files
+## Summary
 
-- `config.json`: every input (cities, wages, assumptions, planted problems, plan defaults). In production, Peazy's database replaces this and the synthetic generator.
-- `model.py`: builds the network, diagnoses each location, makes territories and routes, and writes `index.html`.
-- `road.py`: drive times from OpenStreetMap (OSRM). No account needed.
-- `template.html`: the dashboard.
-- `app.py`: serves the dashboard and rebuilds it when you click **Refresh drive times**.
+Losing locations aren't one problem, so negotiating vendor prices across the board won't fix them. Each location loses money for a specific, measurable reason that Peazy's data already reveals, and each reason has its own fix.
 
-## Run
+This prototype diagnoses all 2,000 locations, redesigns vendor territories and routes, and tests a recovery plan before it touches a customer:
+
+- **Diagnosis:** each location's gap to its 25% target margin splits into four causes: underpricing, travel and low density, unpaid scope creep, and billed hours above geofence time. The biggest one is its cause.
+- **Territories and routes:** K-Means groups each metro's sites into territories served by one vendor, and 2-opt builds each route from real OpenStreetMap drive times.
+- **Plan simulator:** estimates each fix per location and tests any combination.
+
+## Results (synthetic data)
+
+| | Today | With the plan |
+|---|---|---|
+| Locations losing money | 612 | 138 |
+| Gross margin | 5.5% | 17.4% |
+
+In New York, 7 vendors crisscrossing the city become 24 territory routes with 63% less driving.
+
+## Run it locally
 
 ```bash
 pip install -r requirements.txt
-python app.py     # first start builds the model (about 5 minutes), then open http://127.0.0.1:5000
+python app.py     # first start takes about 5 minutes, then open http://127.0.0.1:5000
 ```
 
-## AI tools used
+| File | Purpose |
+|---|---|
+| `config.json` | All inputs and assumptions |
+| `model.py` | Diagnosis, territories, routes, and dashboard build |
+| `road.py` | Drive times from OpenStreetMap (OSRM), no account needed |
+| `template.html` | Dashboard |
+| `app.py` | Flask server with a one-click rebuild |
 
-_Edit so it accurately describes what you did._ I used Claude (Anthropic) as a coding assistant. I chose the approach and assumptions, and reviewed and tested the results.
+Built with Python, scikit-learn, OSRM, and Flask. All data is synthetic; see the write-up for assumptions, limitations, and AI tools used.
